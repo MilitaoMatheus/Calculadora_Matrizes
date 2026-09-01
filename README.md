@@ -1,7 +1,7 @@
 # Calculadora de Matrizes — Álgebra Linear
 
 **Fatec Osasco — Prefeito Hirant Sanazar**  
-**Curso:** 2 Semestre de Tecnologia em Desenvolvimento de Software Multiplataforma (DSM)  
+**Curso:** 3º Semestre de Tecnologia em Desenvolvimento de Software Multiplataforma (DSM)  
 **Disciplina:** Álgebra Linear  
 **Professor:** Prof. Dr. Eduardo 
 
