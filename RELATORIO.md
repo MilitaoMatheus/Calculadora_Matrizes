@@ -4,6 +4,12 @@
 **Curso:** Tecnologia em Desenvolvimento de Software Multiplataforma (DSM)  
 **Disciplina:** Álgebra Linear  
 **Docente:** Prof. Dr. Eduardo  
+
+**Integrantes:**
+- Fabio Aparecido de Sousa
+- Felipe da Silva Rodrigues
+- Matheus Militão da Silva
+  
 **Atividade:** 1º Exercício Programa  
 
 ---
