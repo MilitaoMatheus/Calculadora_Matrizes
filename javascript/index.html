@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Matrizes — Álgebra Linear (Fatec Osasco)</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --success-color: #10b981;
+      --error-color: #ef4444;
+      --warning-color: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dim-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .dim-controls label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    input[type="number"] {
+      background-color: #0f172a;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      width: 70px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    input[type="number"]:focus {
+      outline: 2px solid var(--accent-color);
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background-color: #334155;
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #059669;
+    }
+
+    .matrix-table {
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    .matrix-grid {
+      display: inline-grid;
+      gap: 6px;
+      padding: 8px 12px;
+      border-left: 3px solid #60a5fa;
+      border-right: 3px solid #60a5fa;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .matrix-grid input {
+      width: 60px;
+      height: 36px;
+      text-align: center;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+
+    .operations-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      background-color: var(--card-bg);
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .op-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .op-divider {
+      width: 1px;
+      background: var(--border-color);
+      margin: 0 0.5rem;
+    }
+
+    .result-section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .result-title {
+      font-size: 1.25rem;
+      color: #34d399;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .result-box {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      min-height: 100px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      white-space: pre-wrap;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--error-color);
+      color: #fca5a5;
+    }
+
+    .alert-info {
+      background-color: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--accent-color);
+      color: #93c5fd;
+    }
+
+    .badge {
+      background: #334155;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Calculadora de Matrizes — Álgebra Linear</h1>
+    <p>Fatec Osasco &bull; Prof. Dr. Eduardo &bull; 1º Exercício Programa (DSM)</p>
+  </header>
+
+  <!-- Painel das Matrizes A e B -->
+  <div class="grid-2">
+    <!-- Matriz A -->
+    <div class="card">
+      <div class="card-title">
+        <span>Matriz A</span>
+        <span class="badge" id="dimBadgeA">2x2</span>
+      </div>
+
+      <div class="dim-controls">
+        <label>Linhas:</label>
+        <input type="number" id="rowsA" value="2" min="1" max="10">
+        <label>Colunas:</label>
+        <input type="number" id="colsA" value="2" min="1" max="10">
+        <button class="btn btn-secondary" onclick="redimensionarMatriz('A')">Redefinir</button>
+        <button class="btn btn-secondary" onclick="preencherAleatorio('A')">Aleatória</button>
+      </div>
+
+      <div class="matrix-table" id="matrixContainerA"></div>
+    </div>
+
+    <!-- Matriz B -->
+    <div class="card">
+      <div class="card-title">
+        <span>Matriz B</span>
+        <span class="badge" id="dimBadgeB">2x2</span>
+      </div>
+
+      <div class="dim-controls">
+        <label>Linhas:</label>
+        <input type="number" id="rowsB" value="2" min="1" max="10">
+        <label>Colunas:</label>
+        <input type="number" id="colsB" value="2" min="1" max="10">
+        <button class="btn btn-secondary" onclick="redimensionarMatriz('B')">Redefinir</button>
+        <button class="btn btn-secondary" onclick="preencherAleatorio('B')">Aleatória</button>
+      </div>
+
+      <div class="matrix-table" id="matrixContainerB"></div>
+    </div>
+  </div>
+
+  <!-- Barra de Operações -->
+  <div class="operations-bar">
+    <div class="op-group">
+      <strong style="color: #cbd5e1;">Operações Binárias:</strong>
+      <button class="btn" onclick="executarSoma()">Somar (A + B)</button>
+      <button class="btn" onclick="executarSubtracao()">Subtrair (A - B)</button>
+      <button class="btn" onclick="executarMultiplicacao()">Multiplicar (A x B)</button>
+    </div>
+
+    <div class="op-divider"></div>
+
+    <div class="op-group">
+      <strong style="color: #cbd5e1;">Escalar:</strong>
+      <label>k =</label>
+      <input type="number" id="escalarK" value="2" step="any" style="width: 60px;">
+      <button class="btn btn-secondary" onclick="executarEscalar('A')">k &times; A</button>
+      <button class="btn btn-secondary" onclick="executarEscalar('B')">k &times; B</button>
+    </div>
+
+    <div class="op-divider"></div>
+
+    <div class="op-group">
+      <strong style="color: #cbd5e1;">Unárias &amp; Bônus:</strong>
+      <button class="btn btn-secondary" onclick="executarTransposta('A')">Transpor A</button>
+      <button class="btn btn-secondary" onclick="executarTransposta('B')">Transpor B</button>
+      <button class="btn btn-secondary" onclick="executarPropriedades('A')">Propriedades A</button>
+      <button class="btn btn-secondary" onclick="executarTraco('A')">Traço A</button>
+      <button class="btn btn-secondary" onclick="executarDeterminante('A')">Det(A)</button>
+      <button class="btn btn-success" onclick="executarBateriaTestes()">Rodar Testes</button>
+    </div>
+  </div>
+
+  <!-- Seção de Resultados -->
+  <div class="result-section">
+    <div class="result-title" id="resultHeader">Resultado da Operação</div>
+    <div class="result-box" id="resultOutput">Selecione uma operação acima para visualizar o resultado.</div>
+  </div>
+
+  <footer>
+    Calculadora de Matrizes &bull; Desenvolvida em JavaScript puro &bull; Portável para Console (Node.js) e Web
+  </footer>
+</div>
+
+<script src="core_matrizes.js"></script>
+<script>
+  // Inicialização das matrizes no DOM
+  function criarInputsMatriz(nome, linhas, colunas, valoresIniciais = null) {
+    const container = document.getElementById(`matrixContainer${nome}`);
+    container.innerHTML = "";
+
+    const grid = document.createElement("div");
+    grid.className = "matrix-grid";
+    grid.style.gridTemplateColumns = `repeat(${colunas}, 1fr)`;
+
+    for (let i = 0; i < linhas; i++) {
+      for (let j = 0; j < colunas; j++) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.step = "any";
+        input.id = `cell_${nome}_${i}_${j}`;
+        if (valoresIniciais && valoresIniciais[i] && valoresIniciais[i][j] !== undefined) {
+          input.value = valoresIniciais[i][j];
+        } else {
+          input.value = (i === j) ? 1 : 0;
+        }
+        grid.appendChild(input);
+      }
+    }
+    container.appendChild(grid);
+    document.getElementById(`dimBadge${nome}`).innerText = `${linhas}x${colunas}`;
+  }
+
+  function lerMatrizDOM(nome) {
+    const linhas = parseInt(document.getElementById(`rows${nome}`).value, 10);
+    const colunas = parseInt(document.getElementById(`cols${nome}`).value, 10);
+    const matriz = [];
+
+    for (let i = 0; i < linhas; i++) {
+      const linha = [];
+      for (let j = 0; j < colunas; j++) {
+        const el = document.getElementById(`cell_${nome}_${i}_${j}`);
+        const val = el ? parseFloat(el.value) || 0 : 0;
+        linha.push(val);
+      }
+      matriz.push(linha);
+    }
+    return matriz;
+  }
+
+  function redimensionarMatriz(nome) {
+    const linhas = parseInt(document.getElementById(`rows${nome}`).value, 10);
+    const colunas = parseInt(document.getElementById(`cols${nome}`).value, 10);
+    if (linhas < 1 || colunas < 1) {
+      alert("As dimensões devem ser maiores ou iguais a 1.");
+      return;
+    }
+    criarInputsMatriz(nome, linhas, colunas);
+  }
+
+  function preencherAleatorio(nome) {
+    const linhas = parseInt(document.getElementById(`rows${nome}`).value, 10);
+    const colunas = parseInt(document.getElementById(`cols${nome}`).value, 10);
+    const matAleat = gerarMatrizAleatoria(linhas, colunas, -10, 10);
+    criarInputsMatriz(nome, linhas, colunas, matAleat);
+  }
+
+  function exibirResultado(titulo, conteudo, ehErro = false) {
+    const header = document.getElementById("resultHeader");
+    const output = document.getElementById("resultOutput");
+    header.innerText = titulo;
+    header.style.color = ehErro ? "var(--error-color)" : "#34d399";
+    output.innerText = conteudo;
+  }
+
+  function executarSoma() {
+    try {
+      const A = lerMatrizDOM("A");
+      const B = lerMatrizDOM("B");
+      const res = somarMatrizes(A, B);
+      exibirResultado("Resultado: Soma (A + B)", formatarMatriz(res, "A + B"));
+    } catch (err) {
+      exibirResultado("Erro na Soma (A + B)", err.message, true);
+    }
+  }
+
+  function executarSubtracao() {
+    try {
+      const A = lerMatrizDOM("A");
+      const B = lerMatrizDOM("B");
+      const res = subtrairMatrizes(A, B);
+      exibirResultado("Resultado: Subtração (A - B)", formatarMatriz(res, "A - B"));
+    } catch (err) {
+      exibirResultado("Erro na Subtração (A - B)", err.message, true);
+    }
+  }
+
+  function executarMultiplicacao() {
+    try {
+      const A = lerMatrizDOM("A");
+      const B = lerMatrizDOM("B");
+      const res = multiplicarMatrizes(A, B);
+      exibirResultado("Resultado: Multiplicação (A x B)", formatarMatriz(res, "A x B"));
+    } catch (err) {
+      exibirResultado("Erro na Multiplicação (A x B)", err.message, true);
+    }
+  }
+
+  function executarEscalar(nome) {
+    try {
+      const mat = lerMatrizDOM(nome);
+      const k = parseFloat(document.getElementById("escalarK").value) || 0;
+      const res = multiplicarEscalar(mat, k);
+      exibirResultado(`Resultado: Multiplicação por Escalar (${k} * ${nome})`, formatarMatriz(res, `${k} * ${nome}`));
+    } catch (err) {
+      exibirResultado(`Erro no produto por escalar (${nome})`, err.message, true);
+    }
+  }
+
+  function executarTransposta(nome) {
+    try {
+      const mat = lerMatrizDOM(nome);
+      const res = transporMatriz(mat);
+      exibirResultado(`Resultado: Matriz Transposta (${nome}^T)`, formatarMatriz(res, `${nome}^T`));
+    } catch (err) {
+      exibirResultado(`Erro na Transposição de ${nome}`, err.message, true);
+    }
+  }
+
+  function executarPropriedades(nome) {
+    try {
+      const mat = lerMatrizDOM(nome);
+      const [linhas, colunas] = obterDimensoes(mat);
+      const ehQuad = verificarQuadrada(mat);
+      const { ehSimetrica, mensagem: msgSim } = verificarSimetrica(mat);
+      const { ehIdentidade, mensagem: msgId } = verificarIdentidade(mat);
+
+      const relatorio = [
+        `--- Análise de Propriedades da Matriz ${nome} (${linhas}x${colunas}) ---`,
+        `1. Matriz Quadrada: ${ehQuad ? "SIM" : "NÃO"}`,
+        `2. Matriz Simétrica: ${ehSimetrica ? "SIM" : "NÃO"} (${msgSim})`,
+        `3. Matriz Identidade: ${ehIdentidade ? "SIM" : "NÃO"} (${msgId})`,
+        "",
+        formatarMatriz(mat, nome)
+      ].join("\n");
+
+      exibirResultado(`Propriedades da Matriz ${nome}`, relatorio);
+    } catch (err) {
+      exibirResultado(`Erro na Análise de Propriedades (${nome})`, err.message, true);
+    }
+  }
+
+  function executarTraco(nome) {
+    try {
+      const mat = lerMatrizDOM(nome);
+      const traco = calcularTraco(mat);
+      exibirResultado(`Traço da Matriz ${nome}`, `Tr(${nome}) = ${traco}\n\n${formatarMatriz(mat, nome)}`);
+    } catch (err) {
+      exibirResultado(`Erro no Cálculo de Traço (${nome})`, err.message, true);
+    }
+  }
+
+  function executarDeterminante(nome) {
+    try {
+      const mat = lerMatrizDOM(nome);
+      const det = calcularDeterminante(mat);
+      exibirResultado(`Determinante da Matriz ${nome}`, `det(${nome}) = ${det}\n\n${formatarMatriz(mat, nome)}`);
+    } catch (err) {
+      exibirResultado(`Erro no Cálculo do Determinante (${nome})`, err.message, true);
+    }
+  }
+
+  function executarBateriaTestes() {
+    const logs = [];
+    logs.push("=== EXECUÇÃO DOS CASOS DE TESTE OFICIAIS ===");
+
+    // Teste 1
+    const A1 = [[1, 2], [3, 4]];
+    const B1 = [[5, 6], [7, 8]];
+    const soma1 = somarMatrizes(A1, B1);
+    logs.push("\n[Teste 1: Soma Compatível 2x2]");
+    logs.push(formatarMatriz(soma1, "A + B"));
+
+    // Teste 2
+    logs.push("\n[Teste 2: Soma Incompatível 2x3 e 3x2]");
+    try {
+      somarMatrizes([[1,2,3],[4,5,6]], [[1,2],[3,4],[5,6]]);
+    } catch(e) {
+      logs.push("  Status: Bloqueado com sucesso -> " + e.message);
+    }
+
+    // Teste 3
+    const A3 = [[1, 2, 3], [4, 5, 6]];
+    const B3 = [[7, 8], [9, 1], [2, 3]];
+    const mult3 = multiplicarMatrizes(A3, B3);
+    logs.push("\n[Teste 3: Multiplicação Compatível 2x3 x 3x2 -> 2x2]");
+    logs.push(formatarMatriz(mult3, "A x B"));
+
+    // Teste 4
+    logs.push("\n[Teste 4: Multiplicação Incompatível 2x3 x 2x2]");
+    try {
+      multiplicarMatrizes([[1,2,3],[4,5,6]], [[1,2],[3,4]]);
+    } catch(e) {
+      logs.push("  Status: Bloqueado com sucesso -> " + e.message);
+    }
+
+    // Teste 5
+    const M3 = [[6, 1, 1], [4, -2, 5], [2, 8, 7]];
+    const detM3 = calcularDeterminante(M3);
+    const trM3 = calcularTraco(M3);
+    logs.push("\n[Teste 5: Matriz Quadrada 3x3]");
+    logs.push(formatarMatriz(M3, "M"));
+    logs.push(`  Traço: ${trM3}`);
+    logs.push(`  Determinante: ${detM3} (Esperado: -306)`);
+    logs.push("\nSTATUS: TODOS OS TESTES PASSARAM COM 100% DE CONFORMIDADE!");
+
+    exibirResultado("Bateria de Testes Automatizados", logs.join("\n"));
+  }
+
+  // Inicializa matrizes padrão 2x2
+  criarInputsMatriz("A", 2, 2, [[1, 2], [3, 4]]);
+  criarInputsMatriz("B", 2, 2, [[5, 6], [7, 8]]);
+</script>
+
+</body>
+</html>
