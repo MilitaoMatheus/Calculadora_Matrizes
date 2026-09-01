@@ -1,7 +1,7 @@
 # Relatório Técnico — Calculadora de Matrizes
 
 **Instituição:** Faculdade de Tecnologia de Osasco — Prefeito Hirant Sanazar (Fatec Osasco)  
-**Curso:** Tecnologia em Desenvolvimento de Software Multiplataforma (DSM)  
+**Curso:** 3º Semestre de Tecnologia em Desenvolvimento de Software Multiplataforma (DSM)  
 **Disciplina:** Álgebra Linear  
 **Docente:** Prof. Dr. Eduardo  
 
